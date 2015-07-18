@@ -74,14 +74,14 @@ func (c *Client) read() ([]byte, error) {
 		return nil, err
 	}
 
-	data := buf[:len(buf)]
+	data := buf[:len(buf)-1]
 	checksum := c.checksum(header) ^ c.checksum(data)
 
 	if checksum != buf[len(buf)-1] {
-		// return nil, CheckSumError
+		return nil, CheckSumError
 	}
 
-	return append(header, data...), nil
+	return append(header, buf...), nil
 }
 
 func (c *Client) build(data []byte) []byte {
