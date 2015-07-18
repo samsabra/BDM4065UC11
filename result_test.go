@@ -1,0 +1,33 @@
+package bdm
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestResultHeader(t *testing.T) {
+	r := Result{0x21, 0x01, 0x00, 0x00, 0x04, 0x01, 0x1D, 0x03, 0x26}
+	h := r.Header()
+
+	if reflect.DeepEqual(h, []byte{0x21, 0x01, 0x00, 0x04, 0x01}) {
+		t.Error("%v is not header.", h)
+	}
+}
+
+func TestResultData(t *testing.T) {
+	r := Result{0x21, 0x01, 0x00, 0x00, 0x04, 0x01, 0x1D, 0x03, 0x26}
+	d := r.Data()
+
+	if !reflect.DeepEqual(d, []byte{0x1D, 0x03}) {
+		t.Error("%v is not data.", d)
+	}
+}
+
+func TestResultChecksum(t *testing.T) {
+	r := Result{0x21, 0x01, 0x00, 0x00, 0x04, 0x01, 0x1D, 0x03, 0x26}
+	d := r.checksum()
+
+	if d != 0x26 {
+		t.Error("%v is not checksum.", d)
+	}
+}

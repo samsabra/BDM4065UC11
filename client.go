@@ -59,38 +59,40 @@ func (c *Client) write(data []byte) (int, error) {
 	return c.serial.Write(msg)
 }
 
-// [Header] [MonitorID] [Category] [Page] [Length] [Control] [Data 0] ... [Data N] [Checksum]
+// [Header] [MonitorID] [Category] [Page] [Length] [Control] [Command] [Data 0] ... [Data N] [Checksum]
 // Or
 // [Header] [MonitorID] [Category] [Page] [Length] [Control] [Data 0] [Status] [Checksum]
-func (c *Client) read() ([]byte, error) {
-	header := make([]byte, 5)
+func (c *Client) read() (Result, error) {
+	header := make([]byte, 6)
 	_, err := io.ReadFull(c.serial, header)
 	if err != nil {
 		return nil, err
 	}
 
-	buf := make([]byte, header[4])
+	buf := make([]byte, header[4]-1)
 	_, err = io.ReadFull(c.serial, buf)
 	if err != nil {
 		return nil, err
 	}
 
-	data := buf[:len(buf)-1]
+	res := Result(append(header, buf...))
+
+	data := res.Data()
 	var checksum byte
-	if data0 := data[1]; data0 == 0x00 {
+	if data0 := data[0]; data0 == 0x00 {
 		// Response the status
-		checksum = c.checksum(header) ^ c.checksum(data)
+		checksum = c.checksum(res[:len(res)-1])
 	} else {
 		// Response the data
 		// ignore command
-		checksum = c.checksum(header) ^ c.checksum(data[0:1]) ^ c.checksum(data[2:len(data)])
+		checksum = c.checksum(header) ^ c.checksum(data[1:])
 	}
 
-	if checksum != buf[len(buf)-1] {
-		return nil, fmt.Errorf("Checksum Error. Expected: %v but received %v", checksum, buf[len(buf)-1])
+	if checksum != res.checksum() {
+		return nil, fmt.Errorf("Checksum Error. Expected: %v but received %v", checksum, res.checksum())
 	}
 
-	return append(header, buf...), nil
+	return res, nil
 }
 
 // [Header] [MonitorID] [Category] [Page] [Function] [Length] [Control] [Data 0] ... [Data N] [Checksum]

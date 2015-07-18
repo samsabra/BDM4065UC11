@@ -43,7 +43,7 @@ func TestRead(t *testing.T) {
 			t.Error(err)
 		}
 
-		if !reflect.DeepEqual(res, b) {
+		if !reflect.DeepEqual(res, Result(b)) {
 			t.Errorf("Expected %v, but got %v", b, res)
 		}
 	}
