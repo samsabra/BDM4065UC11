@@ -24,3 +24,7 @@ func (r Result) CheckChecksum() error {
 	}
 	return nil
 }
+
+func (r Result) String() string {
+	return string(r.Data()[1:])
+}
