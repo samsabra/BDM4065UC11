@@ -36,17 +36,13 @@ func New(port string, baud int) (*Client, error) {
 	return c, nil
 }
 
-func (c *Client) Send(data []byte) ([]byte, error) {
+func (c *Client) Send(data []byte) (Result, error) {
 	_, err := c.write(data)
 	if err != nil {
 		return nil, err
 	}
-	resData, err := c.read()
-	if err != nil {
-		return nil, err
-	}
 
-	return resData, nil
+	return c.read()
 }
 
 func (c *Client) Close() error {
