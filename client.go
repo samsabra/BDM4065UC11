@@ -8,7 +8,7 @@ import (
 )
 
 type Client struct {
-	serial *serial.Port
+	serial io.ReadWriteCloser
 }
 
 var fixedHeader = []byte{
@@ -18,8 +18,6 @@ var fixedHeader = []byte{
 	0x00, // Page
 	0x00, // Function
 }
-
-var CheckSumError = fmt.Errorf("Checksum error")
 
 const control byte = 0x01
 
@@ -75,10 +73,18 @@ func (c *Client) read() ([]byte, error) {
 	}
 
 	data := buf[:len(buf)-1]
-	checksum := c.checksum(header) ^ c.checksum(data)
+	var checksum byte
+	if data0 := data[1]; data0 == 0x00 {
+		// Response the status
+		checksum = c.checksum(header) ^ c.checksum(data)
+	} else {
+		// Response the data
+		// ignore command
+		checksum = c.checksum(header) ^ c.checksum(data[0:1]) ^ c.checksum(data[2:len(data)])
+	}
 
 	if checksum != buf[len(buf)-1] {
-		return nil, CheckSumError
+		return nil, fmt.Errorf("Checksum Error. Expected: %v but received %v", checksum, buf[len(buf)-1])
 	}
 
 	return append(header, buf...), nil
@@ -105,5 +111,3 @@ func (_ *Client) checksum(b []byte) byte {
 	}
 	return res
 }
-
-var _ io.Closer = &Client{}
