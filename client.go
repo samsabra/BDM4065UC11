@@ -1,7 +1,6 @@
 package bdm
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/tarm/serial"
@@ -77,19 +76,8 @@ func (c *Client) read() (Result, error) {
 
 	res := Result(append(header, buf...))
 
-	data := res.Data()
-	var checksum byte
-	if data0 := data[0]; data0 == 0x00 {
-		// Response the status
-		checksum = c.checksum(res[:len(res)-1])
-	} else {
-		// Response the data
-		// ignore command
-		checksum = c.checksum(header) ^ c.checksum(data[1:])
-	}
-
-	if checksum != res.checksum() {
-		return nil, fmt.Errorf("Checksum Error. Expected: %v but received %v", checksum, res.checksum())
+	if err := res.CheckChecksum(); err != nil {
+		return nil, err
 	}
 
 	return res, nil
@@ -104,13 +92,13 @@ func (c *Client) build(data []byte) []byte {
 	res = append(res, control)
 	res = append(res, data...)
 
-	checksum := c.checksum(res)
+	checksum := checksum(res)
 	res = append(res, checksum)
 
 	return res
 }
 
-func (_ *Client) checksum(b []byte) byte {
+func checksum(b []byte) byte {
 	res := byte(0)
 	for _, v := range b {
 		res ^= v
