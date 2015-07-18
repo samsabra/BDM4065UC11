@@ -76,11 +76,7 @@ func (c *Client) read() (Result, error) {
 
 	res := Result(append(header, buf...))
 
-	if err := res.CheckChecksum(); err != nil {
-		return nil, err
-	}
-
-	return res, nil
+	return res, res.CheckChecksum()
 }
 
 // [Header] [MonitorID] [Category] [Page] [Function] [Length] [Control] [Data 0] ... [Data N] [Checksum]
