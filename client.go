@@ -59,6 +59,9 @@ func (c *Client) write(data []byte) (int, error) {
 	return c.serial.Write(msg)
 }
 
+// [Header] [MonitorID] [Category] [Page] [Length] [Control] [Data 0] ... [Data N] [Checksum]
+// Or
+// [Header] [MonitorID] [Category] [Page] [Length] [Control] [Data 0] [Status] [Checksum]
 func (c *Client) read() ([]byte, error) {
 	header := make([]byte, 5)
 	_, err := io.ReadFull(c.serial, header)
@@ -90,6 +93,7 @@ func (c *Client) read() ([]byte, error) {
 	return append(header, buf...), nil
 }
 
+// [Header] [MonitorID] [Category] [Page] [Function] [Length] [Control] [Data 0] ... [Data N] [Checksum]
 func (c *Client) build(data []byte) []byte {
 	res := make([]byte, 0, len(data)+8)
 	res = append(res, fixedHeader...)
