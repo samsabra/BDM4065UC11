@@ -3,9 +3,9 @@ package bdm
 import "fmt"
 
 // Result is result to read from display.
-//                           Header                         |              Data             | Checksum
-// [Header] [MonitorID] [Category] [Page] [Length] [Control] [Command] [Data 0] ... [Data N] [Checksum]
-// [Header] [MonitorID] [Category] [Page] [Length] [Control] [Data 0] [Status]               [Checksum]
+//  |                         Header                         |              Data             | Checksum |
+//  [Header] [MonitorID] [Category] [Page] [Length] [Control] [Command] [Data 0] ... [Data N] [Checksum]
+//  [Header] [MonitorID] [Category] [Page] [Length] [Control] [Data 0] [Status]               [Checksum]
 type Result []byte
 
 // Header returns header.
