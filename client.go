@@ -6,6 +6,7 @@ import (
 	"github.com/tarm/serial"
 )
 
+// Client is RS-232C client.
 type Client struct {
 	serial io.ReadWriteCloser
 }
@@ -20,6 +21,7 @@ var fixedHeader = []byte{
 
 const control byte = 0x01
 
+// New open a serial port and returns a new client.
 func New(port string, baud int) (*Client, error) {
 	conf := &serial.Config{
 		Name: port,
@@ -36,6 +38,7 @@ func New(port string, baud int) (*Client, error) {
 	return c, nil
 }
 
+// Send writes data to the display, and reads result from the display.
 func (c *Client) Send(data []byte) (Result, error) {
 	_, err := c.write(data)
 	if err != nil {
@@ -45,6 +48,7 @@ func (c *Client) Send(data []byte) (Result, error) {
 	return c.read()
 }
 
+// Close closes a serial port.
 func (c *Client) Close() error {
 	return c.serial.Close()
 }
@@ -90,6 +94,7 @@ func (c *Client) build(data []byte) []byte {
 	return res
 }
 
+// b[0] xor b[1] xor ... b[n]
 func checksum(b []byte) byte {
 	res := byte(0)
 	for _, v := range b {

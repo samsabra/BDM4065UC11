@@ -3,7 +3,7 @@ BDM4065UC11
 
 This is a RS-232C library for [BDM4065UC/11](http://www.philips.co.jp/c/pc-monitor/brilliance-led-backlit-lcd-display-bdm4065uc_11/prd/).
 
-
+[![GoDoc](https://godoc.org/github.com/pocke/BDM4065UC11?status.svg)](https://godoc.org/github.com/pocke/BDM4065UC11)
 [![Build Status](https://travis-ci.org/pocke/BDM4065UC11.svg?branch=master)](https://travis-ci.org/pocke/BDM4065UC11)
 [![Coverage Status](https://coveralls.io/repos/pocke/BDM4065UC11/badge.svg?branch=master&service=github)](https://coveralls.io/github/pocke/BDM4065UC11?branch=master)
 
