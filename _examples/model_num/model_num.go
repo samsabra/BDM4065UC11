@@ -13,13 +13,9 @@ func main() {
 	}
 	defer c.Close()
 
-	data, err := c.Send([]byte{0xA2, 0x01})
+	v, err := c.PlatformVersion()
 	if err != nil {
 		panic(err)
 	}
-	for _, v := range data {
-		fmt.Printf("%X ", v)
-	}
-	fmt.Println()
-	fmt.Println(data.String())
+	fmt.Println(v)
 }
