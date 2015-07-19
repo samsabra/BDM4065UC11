@@ -8,6 +8,33 @@ This is a RS-232C library for [BDM4065UC/11](http://www.philips.co.jp/c/pc-monit
 [![Coverage Status](https://coveralls.io/repos/pocke/BDM4065UC11/badge.svg?branch=master&service=github)](https://coveralls.io/github/pocke/BDM4065UC11?branch=master)
 
 
+Installation
+---------------
+
+```sh
+go get github.com/pocke/BDM4065UC11
+```
+
+
+Usage
+------
+
+```go
+c, err := bdm.New("/dev/ttyUSB0", 9600)
+if err != nil {
+  panic(err)
+}
+defer c.Close()
+
+// Get model number
+data, err := c.Send([]byte{0xA2, 0x01})
+if err != nil {
+  panic(err)
+}
+
+fmt.Println(data.String())  // => BDM4065UC
+```
+
 Refs
 --------
 
