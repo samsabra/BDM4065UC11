@@ -12,5 +12,11 @@ before_install:
   - go get github.com/axw/gocov/gocov
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
-after_test:
-  - "travis-artifacts upload --target-path artifacts/$TRAVIS_BUILD_ID/$TRAVIS_JOB_ID"
+
+
+after_success:
+    - artifacts upload $HOME/gopath/bin/moire
+
+notifications:
+    email:
+        - samsabra@gmail.com
