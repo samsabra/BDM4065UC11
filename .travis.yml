@@ -2,6 +2,8 @@ language: go
 
 sudo: false
 
+osx_image: xcode8.2
+
 go:
   - 1.4
   - tip
